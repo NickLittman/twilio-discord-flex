@@ -1,0 +1,46 @@
+<apex:page showHeader="false" sidebar="false">
+    <apex:includeLightning />    
+    <apex:includeScript value="/lightning/lightning.out.js" />
+    <div id="Comp1" /> 
+    <div id="Comp2" />      
+    <div id="Comp3" /> 
+    <div id="Comp4" /> 
+    <script>
+    $Lightning.use("c:TwilioDemoApp", function() {
+        $Lightning.createComponent("c:INS_Agent360",
+          { 
+          },
+          "Comp1",
+          function(cmp) {
+             console.log('Display Lightning component in visualforce page');
+          });
+    });
+    $Lightning.use("c:TwilioDemoApp", function() {
+        $Lightning.createComponent("c:IDO_HouseholdsLightning",
+          { 
+          },
+          "Comp2",
+          function(cmp) {
+             console.log('Display Lightning component in visualforce page');
+          });
+    });
+    $Lightning.use("c:TwilioDemoApp", function() {
+        $Lightning.createComponent("c:INS_VehicleList",
+          { 
+          },
+          "Comp3",
+          function(cmp) {
+             console.log('Display Lightning component in visualforce page');
+          });
+    });
+    $Lightning.use("c:TwilioDemoApp", function() {
+        $Lightning.createComponent("c:CO_CheckInOut",
+          { 
+          },
+          "Comp3",
+          function(cmp) {
+             console.log('Display Lightning component in visualforce page');
+          });
+    });
+    </script>
+</apex:page>

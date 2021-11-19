@@ -1,0 +1,188 @@
+<aura:component implements="flexipage:availableForRecordHome,force:hasRecordId,force:hasSObjectName" controller="FlexContact" access="global">
+    
+    <aura:attribute name="backgroundImageUrl" type="String" access="global"/>
+    <aura:attribute name="backgroundHexColor" type="String" access="global"/>
+    <aura:attribute name="pullMargin"	type="Boolean" access="global"/>
+    <aura:attribute name="contactFields" type="String[]" access="global" default="Name, Cust360_Contact_Picture_URL__c, Title, Cust360_Metric1__c,MailingCity,MailingState,Cust360_Metric2__c" />
+    <aura:attribute name="metric1Icon" type="String" access="global"/>
+    <aura:attribute name="metric1IconSize" type="String" access="global"/>
+    <aura:attribute name="metric1Label" type="String" access="global"/>
+    <aura:attribute name="metric2Icon" type="String" access="global"/>
+    <aura:attribute name="metric2IconSize" type="String" access="global"/>
+    <aura:attribute name="metric2Label" type="String" access="global"/>
+    <aura:attribute name="hideCust360Id" type="Boolean" access="global"/>
+    <aura:attribute name="hideChurn" type="Boolean" access="global"/>
+    <aura:attribute name="threshold1" type="Integer" access="global" default="20"/>
+    <aura:attribute name="threshold2" type="Integer" access="global" default="60"/>
+    <aura:attribute name="iconColor" type="String" access="global" default="#0070d2"/>
+    <aura:attribute name="City" type="String" access="global" default="Chicago"/>
+    <aura:attribute name="State" type="String" access="global" default="IL"/>
+    <aura:attribute name="recentList" type="Object[]" default=""/>
+    <aura:attribute name="recentID1" type="String" default="0065e0000029DlwAAD"/>
+    <aura:attribute name="discordId" type="String" default=""/>
+    <aura:attribute name="discordNick" type="String" default=""/>
+    <aura:attribute name="contactName" type="String" default="Rachel"/>
+    <aura:attribute name="contactInfluence" type="String" default=""/>
+    <aura:attribute name="contactSentiment" type="String" default=""/>
+    <aura:attribute name="contactNumber" type="String" default="(647)500-2510"/>
+    <aura:attribute name="contactEmail" type="String" default="radams@example.com"/>
+    <aura:attribute name="contactPic" type="String" default="https://cdn.discordapp.com/avatars/774880137392816129/61becd35c8592079b94e5419ccaf00cc.png?size=160"/>
+
+    
+    
+    <aura:attribute name="record" type="Object"/>
+    <aura:attribute name="fields" type="Object"/>
+    <aura:attribute name="recordError" type="String"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:registerEvent name="navigateToSObject" type="force:navigateToSObject"/>
+    
+    
+    <force:recordData aura:id="recordHandler"
+                      recordId="{!v.recordId}"
+                      fields="{!v.contactFields}"                      
+                      targetRecord="{!v.record}"
+                      targetError="{!v.recordError}"
+                      targetFields="{!v.fields}"
+                      mode="EDIT"
+                      recordUpdated="{!c.handleRecordUpdated}"/>
+    
+    
+    <div class="slds-card card" aura:id="card" >
+        <div class="slds-media slds-m-left_x-large">
+            <div class="slds-media_figure">
+                <div class="customer-image-container ">
+                    <aura:if isTrue="{!empty(v.fields.Cust360_Contact_Picture_URL__c)}">
+                        <img src="{!v.contactPic}" class="customer-avatar"/>
+                        <aura:set attribute="else">
+                            <img src="{!v.contactPic}" class="customer-avatar"/>
+                        </aura:set>   
+                    </aura:if>
+                    <br/>
+                    <b>Name: </b>{!v.contactName}<br/>
+                    <b>Discord Id: </b>{!v.discordId}<br/>
+                    <b>Email: </b>{!v.contactEmail}<br/>
+                    <a href="tel:">
+                        <lightning:icon iconName="utility:call" size="x-small"/>
+                        {!v.contactNumber}
+                    </a>
+                    
+                    
+                    <div class="csat-indicator slds-p-right_medium">                                        
+                        <aura:if isTrue="{!not(empty(v.fields.Cust360_CSAT__c))}">
+                            <aura:if isTrue="{!greaterthanorequal(v.fields.Cust360_CSAT__c, 4)}">
+                                <!--<img src="{!$Resource.ContactImageResources + '/ContactImageResources/Positive.png'}" alt="CSAT"  />-->
+                                <lightning:icon iconName="utility:smiley_and_people" class="csat-icon csat-icon-positive" size="small"></lightning:icon>
+                                <aura:set attribute="else">
+                                    <aura:if isTrue="{!lessthan(v.fields.Cust360_CSAT__c, 2)}">
+                                        <lightning:icon iconName="utility:sentiment_negative" class="csat-icon csat-icon-negative" size="small"></lightning:icon>
+                                        <aura:set attribute="else">                                
+                                            <lightning:icon iconName="utility:sentiment_neutral" class="csat-icon csat-icon-neutral" size="small"></lightning:icon>
+                                        </aura:set>
+                                    </aura:if>
+                                </aura:set>
+                            </aura:if>
+                        </aura:if>     
+                        
+                    </div>
+                </div>
+            </div>
+            <div class="slds-media_body slds-m-left_medium slds-m-top_medium">
+                <div class="slds-text-heading_small title-weight">{!v.fields.Name}
+                    <!-- <span> - {!v.fields.Title}</span>-->
+                    <span class="slds-p-left_x-small">
+                        <lightning:badge label="{!v.fields.Title}" class="" />
+                    </span>
+                </div>
+                
+                <div class="slds-text-color_weak ">{!v.fields.MailingCity + ', ' + v.fields.MailingState}</div>
+                <!-- <aura:if isTrue="{!not(empty(v.fields.MailingCity))}">
+                 <div class="slds-text-color_weak ">{!v.fields.MailingCity + ', ' + v.fields.MailingState}</div>
+                </aura:if>  -->  
+            </div>
+        </div>
+        
+        <!-- Customer Metrics -->
+        <lightning:layout horizontalAlign="center" class="slds-m-vertical_medium ">
+            
+            <lightning:layoutItem padding="" size="6" flexibility="auto,grow,shrink" class="slds-border_right" >
+                <div class="slds-media slds-media_center slds-media_large slds-p-left_large slds-p-right_medium" >
+                    <div class="slds-media_figure slds-m-right_x-small">
+                        <lightning:icon iconName="{!v.metric1Icon}" size="{!v.metric1IconSize}" class="grey-icon-platinum"/>
+                    </div>
+                    <div class="slds-media_body">
+                        <div class=" title-weight">
+                            {!v.fields.Cust360_Metric1__c}
+                        </div>
+                        <div class="slds-text-color_weak" style="font-size:12px;">
+                            {!v.metric1Label}
+                        </div>
+                        
+                    </div>
+                </div>                
+                
+            </lightning:layoutItem>
+        </lightning:layout>
+        
+        <div class="slds-m-left_medium slds-m-right_medium slds-m-bottom_medium">
+            <lightning:tabset variant="scoped" class="slds-p-around_x-small" >
+                <lightning:tab label="Details" iconName="utility:multi_picklist" title="Valeur" iconAssistiveText="Valeur"  >
+                    <div class="slds-p-horizontal_small">
+                        <ul class="slds-has-dividers_bottom-space">
+                            <li class="slds-item">
+                                <div class="slds-grid slds-wrap">
+                                    <div class="slds-col slds-size_6-of-12">
+                                        <div class="slds-form-element">
+                                            <span class="slds-form-element__label">Influence:</span>
+                                            <div class="slds-media slds-media_center">
+                                                <div class="slds-media__figure">
+                                                    <lightning:dynamicIcon type="strength" option="3" alternativeText="Strength: 2"/>
+                                                </div>
+                                                <div class="slds-media__body">
+                                                    <span class="slds-form-element__static">High</span>
+                                                </div>
+                                                <div class="slds-media__figure slds-media__figure_reverse"></div>
+                                            </div>
+                                        </div>                                    
+                                    </div>
+                                    
+                                    <div class="slds-col slds-size_6-of-12">
+                                        <div class="slds-form-element">
+                                            <span class="slds-form-element__label">Sentiment:</span>
+                                            <div class="slds-media slds-media_center">
+                                                <div class="slds-media__figure">
+                                                    <lightning:dynamicIcon type="strength" option="2" alternativeText="Strength: 2"/>
+                                                </div>
+                                                <div class="slds-media__body">
+                                                    <span class="slds-form-element__static">Moderate</span>
+                                                </div>
+                                                <div class="slds-media__figure slds-media__figure_reverse"></div>
+                                            </div>
+                                            
+                                        </div>                                    
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="slds-item">
+                                <div class="slds-grid slds-wrap">
+                                    <div class="slds-col slds-size_6-of-12">
+                                        <div class="slds-form-element">
+                                            <span class="slds-form-element__label">Contact Preferences:</span>
+                                            <div class="slds-form-element__control">
+                                                <span class="slds-form-element__static">
+                                                    <lightning:icon iconName="utility:call" size="small" class="slds-p-right_xx-small imgClass-blue"/> 
+                                                    <lightning:icon iconName="utility:sms" size="small" class="slds-p-right_xx-small imgClass-green"/> 
+                                                    <lightning:icon iconName="utility:email" size="small" class="slds-p-right_xx-small" />
+                                                </span>
+                                            </div>
+                                        </div>                                    
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </lightning:tab>
+            </lightning:tabset>
+        </div>
+    </div>
+</aura:component>

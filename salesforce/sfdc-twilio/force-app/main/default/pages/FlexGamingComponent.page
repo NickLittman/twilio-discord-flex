@@ -1,0 +1,18 @@
+<apex:page showHeader="false" sidebar="false">
+    <apex:includeLightning />    
+    <apex:includeScript value="/lightning/lightning.out.js" />
+    <div id="Comp1" /> 
+    <div id="Comp2" />   
+    <div id="Comp3" />     
+    <script>
+    $Lightning.use("c:TwilioDemoApp", function() {
+        $Lightning.createComponent("c:flex_agent360",
+          { 
+          },
+          "Comp2",
+          function(cmp) {
+             console.log('Display Lightning component in visualforce page');
+          });
+    });
+    </script>
+</apex:page>

@@ -1,0 +1,6 @@
+<aura:documentation>
+	<aura:description>Documentation</aura:description>
+	<aura:example name="DiscordProfileHandler" ref="exampleComponentName" label="Label">
+		Render Discord Profile with Segment Attributes
+	</aura:example>
+</aura:documentation>
