@@ -1,17 +1,11 @@
 # Twilio Flex for Discord
 
-### **Region:**
-NAMER
-
-<img src="https://code.hq.twilio.com/storage/user/4012/files/20a09300-376d-11ec-97c3-cf6eefbae931" width="100" height="100">
-<img src="https://code.hq.twilio.com/storage/user/4012/files/344bf980-376d-11ec-97be-2f01d5ce608b" width="100" height="100">
-
-
 ### **Team Members**:
 @nlittman
 @hhargreaves
 @nhuynh
 @sbapat
+
 ---
 
 ## Project Overview
